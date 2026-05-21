@@ -3,103 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AccountHub v2 - @yield('title', 'Dashboard')</title>
+    <title>AccountHub — @yield('title', 'Dashboard')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="logo-area">
-                <div class="logo-icon"></div>
-                AccountHub
-            </div>
-            
-            <ul class="nav-links">
-                <li><a href="#" class="nav-item active">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+<div class="app-container">
+
+    <!-- ── Sidebar ─────────────────────────────────────────────────────── -->
+    <nav class="sidebar">
+        <div class="logo-area">
+            <div class="logo-icon"></div>
+            AccountHub
+        </div>
+
+        <p class="nav-section-label">Main</p>
+        <ul class="nav-links">
+            <li>
+                <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                     Dashboard
-                </a></li>
-                <!-- Section: Accounts -->
-                <li style="margin-top: 24px; margin-bottom: 12px;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; padding: 0 12px;">
-                        ACCOUNTS
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    </div>
-                </li>
-                <li><a href="{{ route('ledgers.index') }}" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </a>
+            </li>
+        </ul>
+
+        <p class="nav-section-label">Accounts</p>
+        <ul class="nav-links">
+            <li>
+                <a href="{{ route('ledgers.index') }}" class="nav-item {{ request()->routeIs('ledgers.index') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
                     Chart of Accounts
-                </a></li>
-                <li><a href="{{ route('ledgers.create') }}" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                    Create New Ledger
-                </a></li>
-                <li><a href="#" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                    Rename Ledgers
-                </a></li>
-                <li><a href="#" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    Remap Ledger Groups
-                </a></li>
-                <li><a href="{{ route('transactions.index') }}" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    Transactions
-                </a></li>
-                <li><a href="{{ route('transactions.create') }}" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    New Journal Entry
-                </a></li>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('ledgers.create') }}" class="nav-item {{ request()->routeIs('ledgers.create') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Ledger
+                </a>
+            </li>
+        </ul>
 
-                <li style="margin-top: 24px; margin-bottom: 12px;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 12px;">
-                        REPORTS
-                    </div>
-                </li>
-                <li><a href="{{ route('reports.trial-balance') }}" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        <p class="nav-section-label">Transactions</p>
+        <ul class="nav-links">
+            <li>
+                <a href="{{ route('transactions.index') }}" class="nav-item {{ request()->routeIs('transactions.index') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    All Transactions
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('transactions.create') }}" class="nav-item {{ request()->routeIs('transactions.create') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Journal Entry
+                </a>
+            </li>
+        </ul>
+
+        <p class="nav-section-label">Reports</p>
+        <ul class="nav-links">
+            <li>
+                <a href="{{ route('reports.trial-balance') }}" class="nav-item {{ request()->routeIs('reports.trial-balance') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                     Trial Balance
-                </a></li>
-                <li><a href="{{ route('reports.profit-loss') }}" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('reports.profit-loss') }}" class="nav-item {{ request()->routeIs('reports.profit-loss') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                     Profit & Loss
-                </a></li>
-                <li><a href="{{ route('reports.balance-sheet') }}" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('reports.balance-sheet') }}" class="nav-item {{ request()->routeIs('reports.balance-sheet') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                     Balance Sheet
-                </a></li>
-            </ul>
+                </a>
+            </li>
+        </ul>
 
-            <div style="margin-top: auto; padding: 24px; border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px;">
-                <div style="background: #ffe4e6; color: #be123c; padding: 10px 12px; text-align: center; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
-                    {{ Auth::user()->name ?? 'System Owner' }}
+        <p class="nav-section-label">Company</p>
+        <ul class="nav-links">
+            <li>
+                <a href="{{ route('entities.create') }}" class="nav-item {{ request()->routeIs('entities.create') ? 'active' : '' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Add Entity
+                </a>
+            </li>
+        </ul>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-avatar">
+                    {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                 </div>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" style="width:100%;background:rgba(0,0,0,0.05);border:1px solid var(--glass-border);border-radius:8px;padding:8px;font-size:0.85rem;color:var(--text-secondary);cursor:pointer;">
-                        Sign Out
-                    </button>
-                </form>
+                <div class="sidebar-user-name">{{ Auth::user()->name ?? 'User' }}</div>
             </div>
-        </nav>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn-signout">Sign Out</button>
+            </form>
+        </div>
+    </nav>
 
-        <!-- Main Workspace -->
-        <main class="main-content">
-            <header class="topbar" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 32px;">
-                <div style="background: white; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 1.1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.02); color: var(--brand-primary); min-width: 200px; text-align: center;">
-                    @php
-                        $activeEntity = \App\Models\Entity::find(session('active_entity_id'));
-                    @endphp
-                    {{ $activeEntity ? $activeEntity->name : 'No Active Entity' }}
-                </div>
-                
-                <input type="text" class="search-bar" placeholder="Search transactions, clients, or GST..." style="width: 300px; padding: 10px 16px; border-radius: 20px; border: 1px solid var(--border-color); background: #f8fafc;">
-            </header>
+    <!-- ── Main ────────────────────────────────────────────────────────── -->
+    <main class="main-content">
 
+        <!-- Topbar -->
+        <header class="topbar">
+            @php $activeEntity = \App\Models\Entity::find(session('active_entity_id')); @endphp
+            <div class="topbar-entity">
+                <div class="topbar-entity-dot"></div>
+                {{ $activeEntity ? $activeEntity->name : 'No entity selected' }}
+                @if($activeEntity)
+                    <span style="font-weight:400;color:var(--text-muted);font-size:0.8rem;">&mdash; {{ $activeEntity->constitution ?? '' }}</span>
+                @endif
+            </div>
+            <input type="text" class="search-bar" placeholder="Search transactions, ledgers…">
+        </header>
+
+        <!-- Alerts (global) -->
+        @if(session('success'))
+            <div style="margin:20px 32px -4px;" class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error') || $errors->any())
+            <div style="margin:20px 32px -4px;" class="alert alert-error">
+                {{ session('error') ?? $errors->first() }}
+            </div>
+        @endif
+
+        <!-- Page content -->
+        <div class="page-body">
             @yield('content')
-            
-        </main>
-    </div>
+        </div>
+
+    </main>
+</div>
 </body>
 </html>

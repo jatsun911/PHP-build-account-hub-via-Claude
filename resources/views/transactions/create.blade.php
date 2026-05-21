@@ -1,153 +1,148 @@
 @extends('layouts.app')
 @section('title', 'New Journal Entry')
 @section('content')
+
 <div class="dashboard-header">
     <div>
         <h1>New Journal Entry</h1>
-        <h3>Double-entry: total debits must equal total credits.</h3>
+        <h3>Double-entry bookkeeping — total debits must equal total credits.</h3>
     </div>
-    <a href="{{ route('transactions.index') }}" class="glass-pill" style="text-decoration:none;color:var(--text-primary);">← All Transactions</a>
+    <a href="{{ route('transactions.index') }}" class="btn btn-outline">← Back</a>
 </div>
 
 @if($errors->any())
-<div style="background:#fee2e2;border:1px solid #fca5a5;color:#b91c1c;padding:12px 20px;border-radius:8px;margin-top:16px;">
-    @foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach
+<div class="alert alert-error">
+    @foreach($errors->all() as $e)<div>{{ $e }}</div>@endforeach
 </div>
 @endif
 
 <form method="POST" action="{{ route('transactions.store') }}" id="journalForm">
-    @csrf
-    <div class="glass-panel" style="margin-top:24px;display:flex;flex-direction:column;gap:20px;">
+@csrf
 
-        <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;">
-            <div>
-                <label style="display:block;font-weight:500;margin-bottom:6px;color:var(--text-secondary);">Date *</label>
-                <input type="date" name="transaction_date" value="{{ old('transaction_date', date('Y-m-d')) }}"
-                    style="width:100%;padding:10px 14px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);font-size:1rem;" required>
-            </div>
-            <div>
-                <label style="display:block;font-weight:500;margin-bottom:6px;color:var(--text-secondary);">Description / Narration *</label>
-                <input type="text" name="description" value="{{ old('description') }}" placeholder="e.g. Rent payment for May 2026"
-                    style="width:100%;padding:10px 14px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);font-size:1rem;" required>
-            </div>
-        </div>
+<div class="card">
 
+    <!-- Header fields -->
+    <div style="display:grid;grid-template-columns:200px 1fr;gap:16px;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);">
         <div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <h2 style="margin:0;">Ledger Entries</h2>
-                <div style="display:flex;gap:12px;align-items:center;">
-                    <span id="balance-indicator" style="font-weight:600;font-size:0.9rem;color:#059669;">Balanced ✓</span>
-                    <button type="button" onclick="addRow()" class="glass-pill" style="cursor:pointer;border:none;background:var(--brand-primary);color:white;padding:8px 18px;">+ Add Line</button>
-                </div>
-            </div>
-
-            <table style="width:100%;border-collapse:collapse;" id="entriesTable">
-                <thead>
-                    <tr style="border-bottom:1px solid var(--glass-border);">
-                        <th style="padding:10px 8px;color:var(--text-secondary);font-weight:500;text-align:left;">Ledger Account</th>
-                        <th style="padding:10px 8px;color:var(--text-secondary);font-weight:500;text-align:right;width:160px;">Amount (₹)</th>
-                        <th style="padding:10px 8px;color:var(--text-secondary);font-weight:500;text-align:center;width:120px;">Type</th>
-                        <th style="width:40px;"></th>
-                    </tr>
-                </thead>
-                <tbody id="entriesBody">
-                    <tr class="entry-row" data-index="0">
-                        <td style="padding:8px;">
-                            <select name="entries[0][ledger_id]" style="width:100%;padding:10px 12px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);" required>
-                                <option value="">— Select ledger —</option>
-                                @foreach($ledgers as $ledger)
-                                <option value="{{ $ledger->id }}">{{ $ledger->name }} ({{ ucfirst($ledger->type) }})</option>
-                                @endforeach
-                            </select>
-                        </td>
-                        <td style="padding:8px;">
-                            <input type="number" name="entries[0][amount]" placeholder="0.00" step="0.01" min="0.01"
-                                style="width:100%;padding:10px 12px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);text-align:right;"
-                                oninput="updateBalance()" required>
-                        </td>
-                        <td style="padding:8px;text-align:center;">
-                            <select name="entries[0][type]" style="padding:10px 12px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);" onchange="updateBalance()">
-                                <option value="debit">Debit</option>
-                                <option value="credit">Credit</option>
-                            </select>
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr class="entry-row" data-index="1">
-                        <td style="padding:8px;">
-                            <select name="entries[1][ledger_id]" style="width:100%;padding:10px 12px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);" required>
-                                <option value="">— Select ledger —</option>
-                                @foreach($ledgers as $ledger)
-                                <option value="{{ $ledger->id }}">{{ $ledger->name }} ({{ ucfirst($ledger->type) }})</option>
-                                @endforeach
-                            </select>
-                        </td>
-                        <td style="padding:8px;">
-                            <input type="number" name="entries[1][amount]" placeholder="0.00" step="0.01" min="0.01"
-                                style="width:100%;padding:10px 12px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);text-align:right;"
-                                oninput="updateBalance()" required>
-                        </td>
-                        <td style="padding:8px;text-align:center;">
-                            <select name="entries[1][type]" style="padding:10px 12px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);" onchange="updateBalance()">
-                                <option value="debit">Debit</option>
-                                <option value="credit" selected>Credit</option>
-                            </select>
-                        </td>
-                        <td style="padding:8px;text-align:center;">
-                            <button type="button" onclick="removeRow(this)" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:1.1rem;">✕</button>
-                        </td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr style="border-top:2px solid var(--glass-border);">
-                        <td style="padding:12px 8px;font-weight:600;color:var(--text-secondary);">Totals</td>
-                        <td style="padding:12px 8px;text-align:right;font-weight:700;" id="totalDisplay">₹0.00 Dr / ₹0.00 Cr</td>
-                        <td colspan="2"></td>
-                    </tr>
-                </tfoot>
-            </table>
+            <label class="form-label">Entry Date *</label>
+            <input type="date" name="transaction_date" value="{{ old('transaction_date', date('Y-m-d')) }}" class="form-control" required>
         </div>
-
-        <div style="display:flex;gap:12px;justify-content:flex-end;">
-            <a href="{{ route('transactions.index') }}" class="glass-pill" style="text-decoration:none;color:var(--text-secondary);padding:12px 24px;">Cancel</a>
-            <button type="submit" style="background:var(--brand-primary);color:white;border:none;border-radius:12px;padding:12px 32px;font-size:1rem;font-weight:600;cursor:pointer;">
-                Post Journal Entry
-            </button>
+        <div>
+            <label class="form-label">Narration / Description *</label>
+            <input type="text" name="description" value="{{ old('description') }}"
+                placeholder="e.g. Rent payment for May 2026" class="form-control" required>
         </div>
     </div>
+
+    <!-- Entry lines -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h2 style="margin:0;">Ledger Lines</h2>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <span id="balance-indicator" style="font-size:0.82rem;font-weight:600;padding:4px 12px;border-radius:20px;background:var(--green-50);color:var(--green-700);">
+                Balanced ✓
+            </span>
+            <button type="button" onclick="addRow()" class="btn btn-outline" style="padding:7px 14px;">+ Add Line</button>
+        </div>
+    </div>
+
+    <table class="data-table" style="margin-bottom:0;">
+        <thead>
+            <tr>
+                <th>Ledger Account</th>
+                <th style="width:170px;text-align:right;">Amount (₹)</th>
+                <th style="width:130px;text-align:center;">Dr / Cr</th>
+                <th style="width:44px;"></th>
+            </tr>
+        </thead>
+        <tbody id="entriesBody">
+            <tr class="entry-row">
+                <td style="padding:8px 14px;">
+                    <select name="entries[0][ledger_id]" class="form-control" required>
+                        <option value="">— Select ledger —</option>
+                        @foreach($ledgers as $l)
+                        <option value="{{ $l->id }}">{{ $l->name }} ({{ ucfirst($l->type) }})</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td style="padding:8px 14px;">
+                    <input type="number" name="entries[0][amount]" placeholder="0.00" step="0.01" min="0.01"
+                        class="form-control" style="text-align:right;" oninput="updateBalance()" required>
+                </td>
+                <td style="padding:8px 14px;text-align:center;">
+                    <select name="entries[0][type]" class="form-control" onchange="updateBalance()">
+                        <option value="debit">Debit</option>
+                        <option value="credit">Credit</option>
+                    </select>
+                </td>
+                <td></td>
+            </tr>
+            <tr class="entry-row">
+                <td style="padding:8px 14px;">
+                    <select name="entries[1][ledger_id]" class="form-control" required>
+                        <option value="">— Select ledger —</option>
+                        @foreach($ledgers as $l)
+                        <option value="{{ $l->id }}">{{ $l->name }} ({{ ucfirst($l->type) }})</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td style="padding:8px 14px;">
+                    <input type="number" name="entries[1][amount]" placeholder="0.00" step="0.01" min="0.01"
+                        class="form-control" style="text-align:right;" oninput="updateBalance()" required>
+                </td>
+                <td style="padding:8px 14px;text-align:center;">
+                    <select name="entries[1][type]" class="form-control" onchange="updateBalance()">
+                        <option value="debit">Debit</option>
+                        <option value="credit" selected>Credit</option>
+                    </select>
+                </td>
+                <td style="padding:8px 14px;text-align:center;">
+                    <button type="button" onclick="removeRow(this)" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:1.1rem;line-height:1;">✕</button>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr style="background:var(--gray-50);border-top:2px solid var(--border);">
+                <td style="padding:12px 14px;font-weight:600;color:var(--text-muted);">Totals</td>
+                <td style="padding:12px 14px;text-align:right;font-weight:700;" id="totalDisplay">₹0.00 Dr / ₹0.00 Cr</td>
+                <td colspan="2"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+        <a href="{{ route('transactions.index') }}" class="btn btn-outline">Cancel</a>
+        <button type="submit" class="btn">Post Journal Entry</button>
+    </div>
+</div>
 </form>
 
 <script>
 let rowCount = 2;
-const ledgerOptions = `@foreach($ledgers as $ledger)<option value="{{ $ledger->id }}">{{ $ledger->name }} ({{ ucfirst($ledger->type) }})</option>@endforeach`;
+const opts = `@foreach($ledgers as $l)<option value="{{ $l->id }}">{{ $l->name }} ({{ ucfirst($l->type) }})</option>@endforeach`;
 
 function addRow() {
-    const tbody = document.getElementById('entriesBody');
     const i = rowCount++;
     const tr = document.createElement('tr');
     tr.className = 'entry-row';
-    tr.dataset.index = i;
     tr.innerHTML = `
-        <td style="padding:8px;">
-            <select name="entries[${i}][ledger_id]" style="width:100%;padding:10px 12px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);" required>
-                <option value="">— Select ledger —</option>${ledgerOptions}
+        <td style="padding:8px 14px;">
+            <select name="entries[${i}][ledger_id]" class="form-control" required>
+                <option value="">— Select ledger —</option>${opts}
             </select>
         </td>
-        <td style="padding:8px;">
+        <td style="padding:8px 14px;">
             <input type="number" name="entries[${i}][amount]" placeholder="0.00" step="0.01" min="0.01"
-                style="width:100%;padding:10px 12px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);text-align:right;"
-                oninput="updateBalance()" required>
+                class="form-control" style="text-align:right;" oninput="updateBalance()" required>
         </td>
-        <td style="padding:8px;text-align:center;">
-            <select name="entries[${i}][type]" style="padding:10px 12px;border:1px solid var(--glass-border);border-radius:8px;background:rgba(255,255,255,0.6);" onchange="updateBalance()">
-                <option value="debit">Debit</option>
-                <option value="credit">Credit</option>
+        <td style="padding:8px 14px;text-align:center;">
+            <select name="entries[${i}][type]" class="form-control" onchange="updateBalance()">
+                <option value="debit">Debit</option><option value="credit">Credit</option>
             </select>
         </td>
-        <td style="padding:8px;text-align:center;">
-            <button type="button" onclick="removeRow(this)" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:1.1rem;">✕</button>
+        <td style="padding:8px 14px;text-align:center;">
+            <button type="button" onclick="removeRow(this)" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:1.1rem;line-height:1;">✕</button>
         </td>`;
-    tbody.appendChild(tr);
+    document.getElementById('entriesBody').appendChild(tr);
     updateBalance();
 }
 
@@ -159,21 +154,19 @@ function removeRow(btn) {
 }
 
 function updateBalance() {
-    let totalDr = 0, totalCr = 0;
+    let dr = 0, cr = 0;
     document.querySelectorAll('.entry-row').forEach(row => {
         const amt = parseFloat(row.querySelector('input[type=number]')?.value) || 0;
         const type = row.querySelector('select[name*="[type]"]')?.value;
-        if (type === 'debit') totalDr += amt;
-        else totalCr += amt;
+        if (type === 'debit') dr += amt; else cr += amt;
     });
-    const indicator = document.getElementById('balance-indicator');
-    const display = document.getElementById('totalDisplay');
-    display.textContent = `₹${totalDr.toFixed(2)} Dr / ₹${totalCr.toFixed(2)} Cr`;
-    const balanced = Math.abs(totalDr - totalCr) < 0.01 && totalDr > 0;
-    indicator.textContent = balanced ? 'Balanced ✓' : `Off by ₹${Math.abs(totalDr - totalCr).toFixed(2)}`;
-    indicator.style.color = balanced ? '#059669' : '#ef4444';
+    const ind = document.getElementById('balance-indicator');
+    document.getElementById('totalDisplay').textContent = `₹${dr.toFixed(2)} Dr / ₹${cr.toFixed(2)} Cr`;
+    const ok = Math.abs(dr - cr) < 0.01 && dr > 0;
+    ind.textContent = ok ? 'Balanced ✓' : `Off by ₹${Math.abs(dr - cr).toFixed(2)}`;
+    ind.style.background = ok ? 'var(--green-50)' : '#fef2f2';
+    ind.style.color = ok ? 'var(--green-700)' : '#b91c1c';
 }
-
 updateBalance();
 </script>
 @endsection
