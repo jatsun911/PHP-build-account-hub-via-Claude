@@ -43,32 +43,44 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                     Remap Ledger Groups
                 </a></li>
-                <li><a href="#" class="nav-item">
+                <li><a href="{{ route('transactions.index') }}" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                     Transactions
                 </a></li>
-                <li><a href="#" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    Documents
+                <li><a href="{{ route('transactions.create') }}" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    New Journal Entry
                 </a></li>
-                <li><a href="#" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    Payroll & HR
+
+                <li style="margin-top: 24px; margin-bottom: 12px;">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 12px;">
+                        REPORTS
+                    </div>
+                </li>
+                <li><a href="{{ route('reports.trial-balance') }}" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    Trial Balance
                 </a></li>
-                <li><a href="#" class="nav-item">
+                <li><a href="{{ route('reports.profit-loss') }}" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                    Investments
+                    Profit & Loss
                 </a></li>
-                <li><a href="#" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                    Inbox
+                <li><a href="{{ route('reports.balance-sheet') }}" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Balance Sheet
                 </a></li>
             </ul>
-            
-            <div style="margin-top: auto; padding: 24px; border-top: 1px solid var(--glass-border);">
-                <div style="background: #ffe4e6; color: #be123c; padding: 12px; text-align: center; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
+
+            <div style="margin-top: auto; padding: 24px; border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: #ffe4e6; color: #be123c; padding: 10px 12px; text-align: center; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
                     {{ Auth::user()->name ?? 'System Owner' }}
                 </div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" style="width:100%;background:rgba(0,0,0,0.05);border:1px solid var(--glass-border);border-radius:8px;padding:8px;font-size:0.85rem;color:var(--text-secondary);cursor:pointer;">
+                        Sign Out
+                    </button>
+                </form>
             </div>
         </nav>
 

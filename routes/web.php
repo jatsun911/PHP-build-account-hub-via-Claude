@@ -30,10 +30,26 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/set-period', [\App\Http\Controllers\PeriodController::class, 'setPeriod'])->name('period.set');
 
-    Route::post('/upload-statement', [StatementController::class, 'upload'])->name('statement.upload');
-    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-    Route::get('/ledgers', [\App\Http\Controllers\LedgerController::class, 'index'])->name('ledgers.index');
-    Route::get('/ledgers/create', [\App\Http\Controllers\LedgerController::class, 'create'])->name('ledgers.create');
-    Route::post('/ledgers', [\App\Http\Controllers\LedgerController::class, 'store'])->name('ledgers.store');
-    Route::post('/ledger-groups', [\App\Http\Controllers\LedgerController::class, 'storeGroup'])->name('ledger_groups.store');
+    // Entity-scoped routes — requires active entity to belong to the user
+    Route::middleware(['entity.auth'])->group(function () {
+        Route::post('/upload-statement', [StatementController::class, 'upload'])->name('statement.upload');
+
+        // Transactions
+        Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+        Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
+        Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+
+        // Ledgers
+        Route::get('/ledgers', [\App\Http\Controllers\LedgerController::class, 'index'])->name('ledgers.index');
+        Route::get('/ledgers/create', [\App\Http\Controllers\LedgerController::class, 'create'])->name('ledgers.create');
+        Route::post('/ledgers', [\App\Http\Controllers\LedgerController::class, 'store'])->name('ledgers.store');
+        Route::post('/ledger-groups', [\App\Http\Controllers\LedgerController::class, 'storeGroup'])->name('ledger_groups.store');
+
+        // Reports — Inputter role and above
+        Route::middleware(['entity.role:Inputter'])->group(function () {
+            Route::get('/reports/trial-balance', [\App\Http\Controllers\ReportController::class, 'trialBalance'])->name('reports.trial-balance');
+            Route::get('/reports/profit-loss', [\App\Http\Controllers\ReportController::class, 'profitLoss'])->name('reports.profit-loss');
+            Route::get('/reports/balance-sheet', [\App\Http\Controllers\ReportController::class, 'balanceSheet'])->name('reports.balance-sheet');
+        });
+    });
 });

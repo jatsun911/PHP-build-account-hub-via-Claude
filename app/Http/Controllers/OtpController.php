@@ -10,19 +10,19 @@ class OtpController extends Controller
     public function sendEmailOtp(Request $request)
     {
         $request->validate(['email' => 'required|email']);
-        $otp = 123456; // HARDCODED FOR TESTING
-        
+        $otp = str_pad((string) random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+
         $request->session()->put('otp_email_' . $request->email, $otp);
         $request->session()->put('otp_email_expires_' . $request->email, now()->addMinutes(10));
-        
-        // Mock sending email
-        Log::info("Email OTP for {$request->email}: {$otp}");
-        
+
+        Log::info("Email OTP dispatched for {$request->email}");
+
+        // TODO: replace with Mail::to($request->email)->send(new \App\Mail\OtpMail($otp));
+        // when SMTP is configured in .env
+
         return response()->json([
-            'status' => 'success', 
-            'message' => 'OTP sent to email successfully.',
-            // Including OTP in response ONLY for local testing/prototype purposes
-            'mock_otp' => $otp 
+            'status' => 'success',
+            'message' => 'OTP sent to your email address.',
         ]);
     }
 
@@ -30,41 +30,40 @@ class OtpController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'otp' => 'required|numeric'
+            'otp' => 'required|string|size:6',
         ]);
 
         $storedOtp = $request->session()->get('otp_email_' . $request->email);
         $expires = $request->session()->get('otp_email_expires_' . $request->email);
 
         if (!$storedOtp || !$expires || now()->greaterThan($expires)) {
-            return response()->json(['status' => 'error', 'message' => 'OTP expired or invalid.'], 400);
+            return response()->json(['status' => 'error', 'message' => 'OTP expired or not found. Please request a new one.'], 400);
         }
 
-        if ($storedOtp == $request->otp) {
+        if ($storedOtp === (string) $request->otp) {
             $request->session()->put('email_verified_for_entity', $request->email);
             $request->session()->forget(['otp_email_' . $request->email, 'otp_email_expires_' . $request->email]);
             return response()->json(['status' => 'success', 'message' => 'Email verified successfully.']);
         }
 
-        return response()->json(['status' => 'error', 'message' => 'Invalid OTP.'], 400);
+        return response()->json(['status' => 'error', 'message' => 'Invalid OTP. Please try again.'], 400);
     }
 
     public function sendMobileOtp(Request $request)
     {
         $request->validate(['mobile' => 'required|string|min:10']);
-        $otp = 123456; // HARDCODED FOR TESTING
-        
+        $otp = str_pad((string) random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+
         $request->session()->put('otp_mobile_' . $request->mobile, $otp);
         $request->session()->put('otp_mobile_expires_' . $request->mobile, now()->addMinutes(10));
-        
-        // Mock sending SMS
-        Log::info("Mobile OTP for {$request->mobile}: {$otp}");
-        
+
+        Log::info("Mobile OTP dispatched for {$request->mobile}");
+
+        // TODO: replace with SMS provider integration when configured
+
         return response()->json([
-            'status' => 'success', 
-            'message' => 'OTP sent to mobile successfully.',
-            // Including OTP in response ONLY for local testing/prototype purposes
-            'mock_otp' => $otp
+            'status' => 'success',
+            'message' => 'OTP sent to your mobile number.',
         ]);
     }
 
@@ -72,22 +71,22 @@ class OtpController extends Controller
     {
         $request->validate([
             'mobile' => 'required|string',
-            'otp' => 'required|numeric'
+            'otp' => 'required|string|size:6',
         ]);
 
         $storedOtp = $request->session()->get('otp_mobile_' . $request->mobile);
         $expires = $request->session()->get('otp_mobile_expires_' . $request->mobile);
 
         if (!$storedOtp || !$expires || now()->greaterThan($expires)) {
-            return response()->json(['status' => 'error', 'message' => 'OTP expired or invalid.'], 400);
+            return response()->json(['status' => 'error', 'message' => 'OTP expired or not found. Please request a new one.'], 400);
         }
 
-        if ($storedOtp == $request->otp) {
+        if ($storedOtp === (string) $request->otp) {
             $request->session()->put('mobile_verified_for_entity', $request->mobile);
             $request->session()->forget(['otp_mobile_' . $request->mobile, 'otp_mobile_expires_' . $request->mobile]);
             return response()->json(['status' => 'success', 'message' => 'Mobile verified successfully.']);
         }
 
-        return response()->json(['status' => 'error', 'message' => 'Invalid OTP.'], 400);
+        return response()->json(['status' => 'error', 'message' => 'Invalid OTP. Please try again.'], 400);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Entity;
 use App\Models\EntityUser;
+use Database\Seeders\SystemLedgerSeeder;
 use Illuminate\Support\Facades\Auth;
 
 class EntityController extends Controller
@@ -56,6 +57,9 @@ class EntityController extends Controller
             'role' => 'Admin'
         ]);
         
+        // Seed system ledgers for this entity
+        (new SystemLedgerSeeder())->run($entity->id);
+
         // Set as active entity in session
         $request->session()->put('active_entity_id', $entity->id);
 

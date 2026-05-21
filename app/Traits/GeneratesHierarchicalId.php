@@ -62,8 +62,11 @@ trait GeneratesHierarchicalId
         }
         
         if ($table === 'ledger_groups') {
-            // [EntityID].G[10000+count]
             $entityId = $this->entity_id;
+            if (!$entityId) {
+                // System group — no entity scope
+                return 'SYSTEM.G' . strtoupper(Str::random(8));
+            }
             $count = DB::table('ledger_groups')->where('entity_id', $entityId)->count() + 1;
             $sequence = 10000 + $count;
             return "{$entityId}.G{$sequence}";

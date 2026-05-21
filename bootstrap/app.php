@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'entity.auth' => \App\Http\Middleware\EnsureActiveEntityBelongsToUser::class,
+            'entity.role' => \App\Http\Middleware\EnsureEntityRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
